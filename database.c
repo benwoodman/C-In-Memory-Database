@@ -17,12 +17,13 @@ int insert(struct member **space, int *space_size, int key, int val) {
     position = hash(key);
     int list_size = space_size[position];
     struct member * list = space[position];
-    for (int i = 0; i < list_size; i++) {
+    for (int i = 0; i < list_size * sizeof(struct member); i += sizeof(struct member)) {
         if (list[i].key <= 0) {
             struct member* m = malloc(sizeof(struct member));
             m->key = key;
             m->value = val;
             list[i] = *m;
+            break;
         }
     }
 
@@ -30,10 +31,16 @@ int insert(struct member **space, int *space_size, int key, int val) {
     return 0;
 }
 
-int retrieve(struct member **space, int key) {
+int retrieve(struct member **space, int *space_size, int key) {
+    int hashed_value;
+    hashed_value = hash(key);
+    for (int i = 0; i < space_size[hashed_value] * sizeof(struct member); i += sizeof(struct member)) {
+        if (space[hashed_value][i].key == key) {
+            return space[hashed_value][i].value;
+        }
+    }
     
-    
-    return space[hash(key)][0].value;
+    return -1;
 }
 
 struct member ** init() {
@@ -48,10 +55,10 @@ int * init_list(struct member **space) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         struct member* list;
         list = (struct member *) malloc(sizeof(struct member));
-        list[0].key = -1;
-        list[0].value = -1;
-        list[1].key = -1;
-        list[1].value = -1;
+        for (int i = 0; i < sizeof(struct member) * 2; i += sizeof(struct member)) {
+            list[i].key = -1;
+            list[i].value = -1;
+        }
         space[i] = list;
         space_size[i] = 2;
     }
@@ -74,6 +81,7 @@ int main() {
     struct member ** space = init();
     int * space_size = init_list(space);
     insert(space, space_size, 110, 1);
+    insert(space, space_size, 126, 2);
     // insert(space, 1110, 2);
 
     // printf("%c", space[0]);
@@ -82,7 +90,8 @@ int main() {
     //     printf("%d", space[i]);
     // }
 
-    printf("\n\n%d", retrieve(space, 110));
+    printf("\n\n%d", retrieve(space, space_size, 110));
+    printf("\n\n%d", retrieve(space, space_size, 126));
     
     return 0;
 }
