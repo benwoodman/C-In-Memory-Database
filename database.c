@@ -65,30 +65,22 @@ int * init_list(struct member **space) {
     return space_size;
 }
 
-// int * list_append() {
 
-// }
 
 int main() {
     // IDEA: each key should correspond to a memory address. that memory
     // address will correspond with a list
     // that list with auto resize as it grows
 
-    // int *space;
-    // space = (int *) malloc(TABLE_SIZE);
-    // space[3] = 11;
-    // strcpy(space, "tutorialspoint");
     struct member ** space = init();
     int * space_size = init_list(space);
+
+    // insert two keys into the database
+
     insert(space, space_size, 110, 1);
     insert(space, space_size, 126, 2);
-    // insert(space, 1110, 2);
 
-    // printf("%c", space[0]);
-    printf("hello world!");
-    // for (int i = 0; i < TABLE_SIZE; i++) {
-    //     printf("%d", space[i]);
-    // }
+    // retrieve two values from the database from previous inserts
 
     printf("\n\n%d", retrieve(space, space_size, 110));
     printf("\n\n%d", retrieve(space, space_size, 126));
